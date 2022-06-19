@@ -21,7 +21,10 @@ import androidx.compose.ui.unit.sp
 import com.example.tipcalculator.ui.theme.TipCalculatorTheme
 import java.text.NumberFormat
 import androidx.annotation.StringRes
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 
 
 class MainActivity : ComponentActivity() {
@@ -55,6 +58,7 @@ fun TipTimeScreen() {
         val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
         val tip = calculateTip(amount, tipPercent)
+        val focusManager = LocalFocusManager.current
 
         Text(
             text = stringResource(R.string.calculate_tip),
@@ -67,6 +71,9 @@ fun TipTimeScreen() {
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
             ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            ),
             value = amountInput,
             onValueChange = {amountInput = it}
         )
@@ -76,6 +83,8 @@ fun TipTimeScreen() {
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }),
             value = tipInput,
             onValueChange = { tipInput = it}
         )
@@ -98,6 +107,7 @@ private fun calculateTip(amount: Double, tipPercent: Double = 15.0): String{
 fun EditNumberField(
     @StringRes label: Int,
     keyboardOptions: KeyboardOptions,
+    keyboardActions: KeyboardActions,
     value:   String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -108,7 +118,8 @@ fun EditNumberField(
         label = { Text(stringResource(label)) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions
     )
 }
 
