@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import kotlin.math.ceil
 
 
 class MainActivity : ComponentActivity() {
@@ -56,7 +57,7 @@ fun TipTimeScreen() {
         val amount = amountInput.toDoubleOrNull() ?:0.0
         val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
-        val tip = calculateTip(amount, tipPercent)
+        val tip = calculateTip(amount, tipPercent, roundUp)
         val focusManager = LocalFocusManager.current
 
         Text(
@@ -98,8 +99,14 @@ fun TipTimeScreen() {
     }
 }
 
-private fun calculateTip(amount: Double, tipPercent: Double = 15.0): String{
-    val tip = tipPercent/100 * amount
+private fun calculateTip(amount: Double, tipPercent: Double = 15.0, roundUp: Boolean = false): String{
+    var tip = tipPercent/100 * amount
+
+    if (roundUp)
+    {
+        tip = ceil(tip)
+    }
+
     return NumberFormat.getCurrencyInstance().format(tip)
 }
 
